@@ -1,0 +1,38 @@
+name: Deploy Website
+on:
+  push:
+    branches:
+      - master
+      - dev
+env:
+  MONGO_DB_NAME: gha-demo
+jobs:
+  test:
+    env:
+      MONGODB_CLUSTER_ADDRESS: cluster0.abcde.mongodb.net
+      MONGODB_USERNAME: ghauser 
+      MONGODB_PASSWORD: ABCDEFGHI123456
+      PORT: 8080
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+      - name: Install dependencies
+        run: npm install
+      - name: output information
+        run: echo "MONGODB_USERNAME: ${{ env.MONGODB_USERNAME }}"
+      - name: Test code
+        run: npm test -- --browsers=ChromeHeadless --watch=false
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Output information
+        run: |
+          echo "MONGODB_USERNAME ${{ env.MONGODB_USERNAME }}"
+          echo "MONGO_DB_NAME ${{ env.MONGO_DB_NAME }}"
