@@ -25,7 +25,8 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: output information
-        run: echo "MONGODB_USERNAME: ${{ env.MONGODB_USERNAME }}"
+        run: | 
+          echo "MONGODB_USERNAME: ${{ env.MONGODB_USERNAME }}"
       - name: Test code
         run: npm test -- --browsers=ChromeHeadless --watch=false
   deploy:
